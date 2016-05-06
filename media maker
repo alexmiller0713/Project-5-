@@ -1,0 +1,379 @@
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Comparator;
+
+/**
+ *<p> This is a Super class for Media Makers, a general class for Actors and NonActors </p>
+ *<p> Names are given along with the possibility of a duplicate. </p>
+ *<p>This method implements comparable, comparator, Serializable to utilize the Collections class, 
+ *and to utilize the HashMap class in the Driver class.</p>  
+ *
+ *
+ */
+public class MediaMaker implements Comparable<MediaMaker>, Comparator<MediaMaker>, Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3189452438248480302L;
+	/** A string representing the MediaMaker's first name*/
+	private String firstName;
+	/** A string representation of the last Name of a Media Maker*/
+	private String lastName;
+	/**A string representation of a duplicate if one is available */
+	private String duplicate;
+	/**An ArrayList of Acting credits*/
+	private ArrayList<Actor> actorCredits;
+	/** A counter for the actor credits arraylist
+	/**An ArrayList of Directing credits*/
+	private ArrayList<Director> directorCredits;
+	/**An ArrayList of Producing credits*/
+	private ArrayList<Producers> producerCredits;
+	
+	/**
+	 * This is the most basic of constructors to allow easy building of objects
+	 */
+	public MediaMaker(){
+		this.firstName = "";
+		this.lastName  = "";
+		this.duplicate = "";
+		this.actorCredits = new ArrayList<Actor>();
+		this.directorCredits = new ArrayList<Director>();
+		this.producerCredits = new ArrayList<Producers>();
+		
+	}
+	
+	public static MediaMaker parseNewMediaMaker(String line){
+		MediaMaker person = new MediaMaker();
+		
+		person.setLastName(MediaMaker.parseLastName(line));
+		person.setFirstName(MediaMaker.parseFirstName(line));
+		person.setDuplicate(MediaMaker.parseDuplicate(line));
+		
+
+		return person;
+	}
+
+	private static String parseLastName (String line){
+		//TODO fill method
+		String name = line.substring(0, line.indexOf(','));
+		//System.out.print(name);
+				return name;
+	}
+	
+	private static String parseFirstName(String line){
+		//TODO fill method
+		String [] split = line.split("\\s");
+		
+		String name = split[1];
+		
+		if(name.indexOf("(") > 0){
+			name = name.substring(0, name.indexOf("(")-1);
+		}
+		
+				return name;
+	}
+	
+	private static String parseDuplicate(String line){
+		//TODO fill method
+		String romanNumeral = "";
+		String name = line.substring(0, line.indexOf("\t") + 1);
+		if (name.indexOf(')') > 0 && name.indexOf('(') > 0){
+			// System.out.println(name);
+			 int start = name.indexOf('(');
+			 int end = name.indexOf("\t");
+			 //System.out.println(start + " " + end);
+			 romanNumeral = name.substring(start, end);
+			 //System.out.println(romanNumeral);
+		}
+				return romanNumeral;
+	}
+	
+	public static void parseMediaParagraph(String line){
+		if(!line.startsWith("\t")){
+		line = line.substring(line.indexOf("\t")+1);
+		}
+		
+		String [] mediaLines = line.split("\t");
+		ArrayList <String> allLines = new ArrayList<String>();
+		for(String thing : mediaLines){
+			if(!thing.isEmpty()){
+				allLines.add(thing);
+			}
+		}
+		for(String killme : allLines){
+			System.out.println(killme);
+		}
+	}
+	
+	/**
+	 * This method returns the String of a Media Maker's first name.
+	 * @return - a String of a media Maker's first name
+	 */
+
+	public String getFirstName(){
+		return this.firstName;
+	}
+	
+	/**
+	 * This method returns the string of a Media Maker's last name
+	 * @return - a String of a media maker's last name.
+	 */
+	public String getLastName(){
+		return this.lastName;
+		
+	}
+	
+	/**
+	 * If a media maker's name is duplicated, it shall return a roman numeral String
+	 * @return - string representation of a Duplicate roman numeral
+	 */
+	public String getDuplicate(){
+		return this.duplicate;
+	}
+	/**
+	 * This method will return an Arraylist of Actor credits, or null if none are available
+	 * @return actorCredits the arraylist of actor credits
+	 */
+	public ArrayList<Actor> getActorCredits(){
+		return this.actorCredits;
+	}
+	/**
+	 * This method returns all the Director methods in the form of an Arraylist
+	 * @return Arraylist of director credits 
+	 */
+	public ArrayList<Director> getDirectorCredits(){
+		return this.directorCredits;
+	}
+	/**
+	 * This method returns all the Producer credits in the form of an Arraylist
+	 * @return Arraylist of producer credits
+	 */
+	public ArrayList<Producers> getProducerCredits(){
+		return this.producerCredits;
+	}
+	/**
+	 * This method shall set the First Name of a media Maker as  a String
+	 * 
+	 * @param name - a String representation of a Media maker's first name
+	 */
+	public void setFirstName(String name){
+		firstName = name;
+	}
+	/**
+	 * this method shall set the Last name of a Media Maker as A String
+	 * @param name - string representation of a media Maker's last name
+	 */
+	public void setLastName(String name){
+		lastName = name;
+	}
+	/**
+	 * This method sets a string of a roman numeral duplicate
+	 * @param duplicate - A string of roman numeral
+	 */
+	public void setDuplicate(String duplicate){
+		this.duplicate = duplicate;
+	}
+	/**
+	 * This method will add an Arraylist of Media Objects to the
+	 *  Actor credit Arraylist
+	 * @param things -an ArrayList of media objects to be set
+	 */
+	public void setActorCredit(String things){
+		
+		if(!things.startsWith("\t")){
+			things = things.substring(things.indexOf("\t")+1);
+		}
+		
+		Actor person = new Actor();
+		person = person.parse(things);
+		
+		actorCredits.add(person);
+	}
+	/**
+	 * This method will add an ArrayList of Media Objects to the
+	 * Director credit ArrayList
+	 * @param things - an arraylist of media objects
+	 */
+	public void setDirectorCredit(String things){
+		
+		if(!things.startsWith("\t")){
+			things = things.substring(things.indexOf("\t")+1);
+		}
+		
+		Director person = new Director();
+		person = person.parse(things);
+		directorCredits.add(person);
+	}
+	
+	public void setProducerCredits(String things){
+		if(!things.startsWith("\t")){
+			things = things.substring(things.indexOf("\t")+1);
+		}
+		
+		Producers person = new Producers();
+		person = person.parseProducers(things);
+		producerCredits.add(person);
+	}
+	/**
+	 * This method overrides the compare() method of Comparator, comparing two mediamakers
+	 * @param  o1 - a MediaMaker object to be compared
+	 * @param  o2 - a MediaMaker Object
+	 * @return a negative number if the first object is less than the second, 0 if they are equal, 
+	 * and a positive number if the first object is more than the second.
+	 */
+	@Override
+	public int compare(MediaMaker o1, MediaMaker o2) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	/**
+	 * This method overrides the compareTo() method of Comparable, comparing two mediamakers
+	 * @param o - a Mediamaker Object to be compared
+	 * @return  a negative number if the first object is less than the second, 0 if they are equal, 
+	 * and a positive number if the first object is more than the second.
+	 */
+	@Override
+	public int compareTo(MediaMaker o) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	public ArrayList<Integer> getCreditYears(){
+		
+		ArrayList<Integer> years = new ArrayList<Integer>();
+		Integer num = null;
+		//begin with actor credits
+		if(!this.actorCredits.isEmpty()){
+			for(Actor dude : actorCredits){
+				Movie thing = dude.getMovie();
+				Episodes otherThing = dude.getEpisode();
+				if(thing == null){
+					 num = otherThing.getReleaseYear();
+				}
+				else{
+					 num = thing.getReleaseYear();
+				}
+				
+				years.add(num);
+			}
+		}
+		
+		//now the directors and producers and so on
+		if(!this.directorCredits.isEmpty()){
+			for(Director dude : this.directorCredits){
+				Movie thing = dude.getMovie();
+				Episodes otherThing = dude.getEpisode();
+				if(thing == null){
+					 num = otherThing.getReleaseYear();
+				}
+				else{
+					 num = thing.getReleaseYear();
+				}
+				
+				years.add(num);
+		}
+		}
+		
+		if(!this.producerCredits.isEmpty()){
+			for(Producers dude : producerCredits){
+				Movie thing = dude.getMovie();
+				Episodes otherThing = dude.getEpisode();
+				if(thing == null){
+					 num = otherThing.getReleaseYear();
+				}
+				else{
+					 num = thing.getReleaseYear();
+				}
+				
+				years.add(num);
+		}
+		}
+		
+		
+		return years;
+	}
+		
+	
+	public String toString(){
+		String all = "";
+		
+		all = this.firstName + " " + this.lastName + "\n";
+		
+		if(!this.actorCredits.isEmpty()){
+			
+			all += "ACTING" + "\n";
+			for(Actor dude : actorCredits){
+				Movie thing = dude.getMovie();
+				Episodes otherThing = dude.getEpisode();
+				if(thing != null){
+					all+= thing.toString() + "\n"; 
+				}
+				else{
+					all += otherThing.toString() + "\n";
+				}
+				
+			}
+			
+		}
+
+		if(!this.directorCredits.isEmpty()){
+			
+			all += "DIRECTING" + "\n";
+			for(Director dude : directorCredits){
+				Movie thing = dude.getMovie();
+				Episodes otherThing = dude.getEpisode();
+				if(thing != null){
+					all+= thing.toString() + "\n"; 
+				}
+				else{
+					all += otherThing.toString() + "\n";
+				}
+				
+			}
+			
+		}
+       if(!this.producerCredits.isEmpty()){
+			
+			all += "PRODUCING" + "\n";
+			for(Producers dude : producerCredits){
+				Movie thing = dude.getMovie();
+				Episodes otherThing = dude.getEpisode();
+				if(thing != null){
+					all+= thing.toString() + "\n"; 
+				}
+				else{
+					all += otherThing.toString() + "\n";
+				}
+				
+			}
+			
+		}
+       
+		return all;
+	}
+	
+	
+public static void writeMediaMaker(String filename, MediaMaker person) throws IOException{
+		
+		FileOutputStream fileOutputStream = new FileOutputStream(filename);
+		ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+		objectOutputStream.writeObject(person);
+		objectOutputStream.close();
+	}
+public static MediaMaker readMediaMaker(String filename) throws IOException, ClassNotFoundException{
+	
+		FileInputStream fileInputStream = new FileInputStream(filename);
+		ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+		MediaMaker person = (MediaMaker) objectInputStream.readObject();
+		objectInputStream.close();
+		return person;
+	}
+
+}
