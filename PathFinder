@@ -1,0 +1,15 @@
+import java.awt.Graphics;
+
+public class PathFinder {
+
+	PathFinder(Graphics G, String S) {
+	}
+	
+	int distanceTo(String v) {
+		return 0;
+	}
+	
+	Iterable<String> pathTo(String v) {
+		return null;
+}
+}
