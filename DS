@@ -1,0 +1,42 @@
+import java.sql.PreparedStatement;
+
+public class degreeofsep {
+
+	private degreeofsep() { 
+
+   
+    String[] args; {
+        String filename  = args[0];
+        String delimiter = args[1];
+        String source    = args[2];
+
+        String updateDegree1 = "insert ignore into Degree1(person, degree) " +
+        	    "select d.person, d.degree " +
+        	    "from Degree2 d;";
+        	Object connection;
+			PreparedStatement copyResults = ((Object) connection).preparedStatement(updateDegree1);
+
+        	
+                int maxDegree = 1;
+                for (;;) {
+                    Object computeNextDegrees;
+					((PreparedStatement) computeNextDegrees).setInt(1, maxDegree);
+                    ((PreparedStatement) computeNextDegrees).executeUpdate();
+                    int updateCount = copyResults.executeUpdate();
+                    if (updateCount == 0) {
+                        --maxDegree;
+                        break;
+                    } else {
+                        ++maxDegree;
+                    }
+                }
+
+        }
+
+      
+               
+
+		
+		
+	}
+}
